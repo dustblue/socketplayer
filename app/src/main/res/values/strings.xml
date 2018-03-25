@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">SocketPlayer</string>
+    <string name="ip_n">IP : \n</string>
+    <string name="port_n">PORT : \n</string>
+    <string name="server">Server</string>
+    <string name="client">Client</string>
+    <string name="enter_ip_address">Enter IP Address</string>
+    <string name="connect">Connect and Receive</string>
+    <string name="choose_a_file">Choose a File</string>
+    <string name="server_mode">Server Mode</string>
+    <string name="client_mode">Client Mode</string>
+</resources>
