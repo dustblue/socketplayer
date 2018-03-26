@@ -18,8 +18,14 @@ public class FileThread extends Thread {
     private Socket socket;
     private String path;
 
-    FileThread(ServerActivity serverActivity, Socket socket, String path) {
+    FileThread(final ServerActivity serverActivity, Socket socket, String path) {
         this.serverActivity = serverActivity;
+        this.serverActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                serverActivity.progressDialog.show();
+            }
+        });
         this.socket = socket;
         this.path = path;
     }
@@ -43,6 +49,8 @@ public class FileThread extends Thread {
 
                 @Override
                 public void run() {
+                    if (serverActivity.progressDialog.isShowing())
+                        serverActivity.progressDialog.dismiss();
                     serverActivity.info.setText(msg);
                     serverActivity.refresh();
                 }
