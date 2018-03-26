@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static com.rakesh.socketplayer.ServerActivity.getPath;
 
@@ -19,6 +17,7 @@ import static com.rakesh.socketplayer.ServerActivity.getPath;
 
 public class ServerSocketThread extends Thread {
 
+    File f;
     private String message;
     private ServerActivity serverActivity;
     private Uri uri;
@@ -41,11 +40,10 @@ public class ServerSocketThread extends Thread {
             e.printStackTrace();
         }
         if (path != null) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                message = Paths.get(path).getFileName().toString();
-            }
+            message = path.split("/")[4];
+
             try {
-                final File file = new File(path);
+                f = new File(path);
 
                 serverActivity.serverSocket = new ServerSocket(ServerActivity.SocketServerPORT);
                 serverActivity.runOnUiThread(new Runnable() {
@@ -55,12 +53,9 @@ public class ServerSocketThread extends Thread {
                         serverActivity.infoPort.setText("Port : " + serverActivity.serverSocket.getLocalPort());
                         serverActivity.choose.setText("Generate QR");
                         serverActivity.info.setText(message);
-                        serverActivity.length = (int) file.length();
+                        serverActivity.length = (int) f.length();
                     }
                 });
-
-                if (file.exists())
-                    file.deleteOnExit();
 
                 while (true) {
                     socket = serverActivity.serverSocket.accept();

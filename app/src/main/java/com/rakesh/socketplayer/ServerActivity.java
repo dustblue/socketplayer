@@ -1,13 +1,19 @@
 package com.rakesh.socketplayer;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,17 +36,71 @@ import java.util.Enumeration;
 public class ServerActivity extends AppCompatActivity {
 
     public static final int CHOOSER_REQUEST_CODE = 100;
-    TextView infoIp, infoPort, info;
+    public final static int QRcodeWidth = 500;
+    static final int SocketServerPORT = 8080;
+    TextView infoIp, infoPort, info, qrText;
     ImageView qr;
-    String textToEncode;
+    String textToEncode, chooseText;
     Button choose;
     int length;
-    static final int SocketServerPORT = 8080;
     ServerSocket serverSocket;
     ServerSocketThread serverSocketThread;
-
-    public final static int QRcodeWidth = 500;
     Bitmap bitmap;
+
+    @Nullable
+    public static String getPath(Context context, Uri uri) throws URISyntaxException {
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = {"_data"};
+
+            try (Cursor cursor = context.getContentResolver().query(uri, projection,
+                    null, null, null)) {
+
+                int column_index = cursor.getColumnIndexOrThrow("_data");
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(column_index);
+                }
+            } catch (Exception e) {
+                // Eat it
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        return null;
+    }
+
+    public static Bitmap TextToImageEncode(String Value) throws WriterException {
+        BitMatrix bitMatrix;
+        try {
+            bitMatrix = new MultiFormatWriter().encode(
+                    Value,
+                    BarcodeFormat.QR_CODE,
+                    QRcodeWidth, QRcodeWidth, null
+            );
+
+        } catch (IllegalArgumentException Illegalargumentexception) {
+
+            return null;
+        }
+        int bitMatrixWidth = bitMatrix.getWidth();
+
+        int bitMatrixHeight = bitMatrix.getHeight();
+
+        int[] pixels = new int[bitMatrixWidth * bitMatrixHeight];
+
+        for (int y = 0; y < bitMatrixHeight; y++) {
+            int offset = y * bitMatrixWidth;
+
+            for (int x = 0; x < bitMatrixWidth; x++) {
+                pixels[offset + x] = bitMatrix.get(x, y) ?
+                        Color.BLACK : Color.WHITE;
+            }
+        }
+        Bitmap bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444);
+
+        bitmap.setPixels(pixels, 0, 500, 0, 0, bitMatrixWidth, bitMatrixHeight);
+        return bitmap;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +111,9 @@ public class ServerActivity extends AppCompatActivity {
         info = findViewById(R.id.info);
         choose = findViewById(R.id.choose);
         qr = findViewById(R.id.qr);
+        qrText = findViewById(R.id.qr_text);
+
+        info.setText(getIntent().getStringExtra("previous"));
 
         infoIp.append(getIpAddress());
         infoPort.append(Integer.toString(SocketServerPORT));
@@ -58,7 +121,8 @@ public class ServerActivity extends AppCompatActivity {
         choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (choose.getText().toString().equals("Choose a File")) {
+                chooseText = choose.getText().toString();
+                if (chooseText.equals("Choose a File")) {
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("*/*");
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -68,27 +132,48 @@ public class ServerActivity extends AppCompatActivity {
                     } catch (android.content.ActivityNotFoundException ex) {
                         Toast.makeText(getParent(), "Please install a File Manager", Toast.LENGTH_SHORT).show();
                     }
-                } else if (choose.getText().toString().equals("Generate QR") && isValid()){
-                    textToEncode = infoIp.getText().toString().split(":")[2].trim().split(" ")[0]
+                } else if (chooseText.equals("Generate QR") && isValid()) {
+                    textToEncode = infoIp.getText().toString().split(" ")[1]
                             + "," + infoPort.getText().toString().split(":")[1].trim()
                             + "," + info.getText().toString()
                             + "," + length;
-                    try {
-                        bitmap = TextToImageEncode(textToEncode);
-                    } catch (WriterException e) {
-                        Toast.makeText(getParent(), "WriterException : " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-                    qr.setImageBitmap(bitmap);
+                    new GenerateQR(ServerActivity.this).execute();
                 }
+            }
+        });
+
+        choose.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                chooseText = choose.getText().toString();
+                if (chooseText.equals("Waiting for Client")) {
+                    new AlertDialog.Builder(ServerActivity.this)
+                            .setTitle("Still Waiting...")
+                            .setMessage("Do you want to cancel this Server?")
+                            .setPositiveButton("NO", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    refresh();
+                                }
+                            })
+                            .create()
+                            .show();
+                }
+                return true;
             }
         });
 
     }
 
-    private boolean isValid() {
+    boolean isValid() {
         //FIXME
-        return false;
+        return true;
     }
 
     @Override
@@ -117,7 +202,7 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     private String getIpAddress() {
-        String ip = "";
+        StringBuilder ip = new StringBuilder();
         try {
             Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
                     .getNetworkInterfaces();
@@ -130,78 +215,57 @@ public class ServerActivity extends AppCompatActivity {
                     InetAddress inetAddress = enumInetAddress.nextElement();
 
                     if (inetAddress.isSiteLocalAddress()) {
-                        ip += "SiteLocalAddress: "
-                                + inetAddress.getHostAddress() + "\n";
+                        ip.append(" ").append(inetAddress.getHostAddress());
                     }
-
                 }
-
             }
-
         } catch (SocketException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
-            ip += "Something Wrong! " + e.toString() + "\n";
+            ip.append("Something Wrong! ").append(e.toString()).append("\n");
         }
 
-        return ip;
+        return ip.toString();
     }
 
-    Bitmap TextToImageEncode(String Value) throws WriterException {
-        BitMatrix bitMatrix;
-        try {
-            bitMatrix = new MultiFormatWriter().encode(
-                    Value,
-                    BarcodeFormat.QR_CODE,
-                    QRcodeWidth, QRcodeWidth, null
-            );
+    public void refresh() {
+        finish();
+        Intent i = getIntent();
+        i.putExtra("previous", info.getText().toString());
+        startActivity(i);
+    }
 
-        } catch (IllegalArgumentException Illegalargumentexception) {
+    public class GenerateQR extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog dialog;
 
+        GenerateQR(ServerActivity activity) {
+            dialog = new ProgressDialog(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("Generating the QR Code...");
+            dialog.setCancelable(false);
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                bitmap = TextToImageEncode(textToEncode);
+            } catch (WriterException e) {
+                Log.e("WriterException : ", e.getMessage());
+                e.printStackTrace();
+            }
             return null;
         }
-        int bitMatrixWidth = bitMatrix.getWidth();
 
-        int bitMatrixHeight = bitMatrix.getHeight();
-
-        int[] pixels = new int[bitMatrixWidth * bitMatrixHeight];
-
-        for (int y = 0; y < bitMatrixHeight; y++) {
-            int offset = y * bitMatrixWidth;
-
-            for (int x = 0; x < bitMatrixWidth; x++) {
-
-                pixels[offset + x] = bitMatrix.get(x, y) ?
-                        getResources().getColor(R.color.QRCodeBlackColor, getTheme())
-                        : getResources().getColor(R.color.QRCodeWhiteColor, getTheme());
+        protected void onPostExecute(Void result) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
             }
+            qrText.setText(textToEncode);
+            qr.setImageBitmap(bitmap);
+            choose.setText("Waiting for Client");
         }
-        Bitmap bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444);
-
-        bitmap.setPixels(pixels, 0, 500, 0, 0, bitMatrixWidth, bitMatrixHeight);
-        return bitmap;
     }
-
-    @Nullable
-    public static String getPath(Context context, Uri uri) throws URISyntaxException {
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = {"_data"};
-
-            try (Cursor cursor = context.getContentResolver().query(uri, projection,
-                    null, null, null)) {
-
-                int column_index = cursor.getColumnIndexOrThrow("_data");
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(column_index);
-                }
-            } catch (Exception e) {
-                // Eat it
-            }
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
-    }
-
 }

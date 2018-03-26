@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SocketPlayer</string>
-    <string name="ip_n">IP : \n</string>
+    <string name="ip_n">IP: </string>
     <string name="port_n">PORT : \n</string>
     <string name="server">Server</string>
     <string name="client">Client</string>

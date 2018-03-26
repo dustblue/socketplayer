@@ -51,7 +51,8 @@ public class ClientThread extends Thread {
                 @Override
                 public void run() {
                     Toast.makeText(clientActivity, "Finished", Toast.LENGTH_LONG).show();
-                }});
+                }
+            });
 
         } catch (IOException e) {
 
@@ -63,10 +64,11 @@ public class ClientThread extends Thread {
                 @Override
                 public void run() {
                     Toast.makeText(clientActivity, eMsg, Toast.LENGTH_LONG).show();
-                }});
+                }
+            });
 
         } finally {
-            if(socket != null){
+            if (socket != null) {
                 try {
                     socket.close();
                 } catch (IOException e) {

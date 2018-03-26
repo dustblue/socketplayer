@@ -14,8 +14,6 @@ import android.widget.EditText;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 
-import java.util.Locale;
-
 public class ClientActivity extends AppCompatActivity {
 
     public static final int BARCODE_REQUEST_CODE = 123;
@@ -44,7 +42,7 @@ public class ClientActivity extends AppCompatActivity {
                 port = Integer.parseInt(textPort.getText().toString());
                 ClientThread clientThread =
                         new ClientThread(ClientActivity.this,
-                                ip , port);
+                                ip, port);
 
                 clientThread.start();
             }
