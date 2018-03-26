@@ -44,7 +44,8 @@ public class FileThread extends Thread {
                 @Override
                 public void run() {
                     serverActivity.info.setText(msg);
-                    serverActivity.choose.setText("Choose File");
+                    serverActivity.choose.setText("Choose a File");
+                    serverActivity.qr.setImageDrawable(serverActivity.getDrawable(R.drawable.ic_qr));
                 }
             });
 

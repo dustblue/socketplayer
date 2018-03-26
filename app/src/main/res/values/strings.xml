@@ -9,4 +9,6 @@
     <string name="choose_a_file">Choose a File</string>
     <string name="server_mode">Server Mode</string>
     <string name="client_mode">Client Mode</string>
+    <string name="qr_code">QR Code</string>
+    <string name="scan">Scan</string>
 </resources>

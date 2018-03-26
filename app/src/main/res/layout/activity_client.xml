@@ -13,15 +13,14 @@
         android:layout_marginBottom="36dp"
         android:gravity="center_horizontal"
         android:hint="@string/enter_ip_address"
-        app:layout_constraintBottom_toTopOf="@+id/port"
+        app:layout_constraintBottom_toTopOf="@+id/port_client"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
     <EditText
-        android:id="@id/port"
+        android:id="@id/port_client"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/port_n"
         android:gravity="center_horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -32,11 +31,33 @@
         android:id="@+id/connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/connect"
         android:layout_marginTop="36dp"
         android:backgroundTint="@color/colorAccent"
-        app:layout_constraintTop_toBottomOf="@id/port"
+        android:text="@string/connect"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/port" />
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_qr" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:labelFor="@id/fab"
+        android:text="@string/scan"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/fab"
+        app:layout_constraintLeft_toLeftOf="@id/fab"
+        app:layout_constraintRight_toRightOf="@id/fab" />
 
 </android.support.constraint.ConstraintLayout>

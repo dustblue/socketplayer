@@ -3,6 +3,7 @@ package com.rakesh.socketplayer;
 import android.net.Uri;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -33,22 +34,33 @@ public class ServerSocketThread extends Thread {
         Socket socket = null;
         try {
             path = getPath(serverActivity, uri);
+            message = path;
+
         } catch (URISyntaxException e) {
-           Log.e("URI SYNTAX", "URISyntaxException");
+            Log.e("URI SYNTAX", "URISyntaxException");
             e.printStackTrace();
         }
         if (path != null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                message = Paths.get(path).getFileName().toString();
+            }
             try {
+                final File file = new File(path);
+
                 serverActivity.serverSocket = new ServerSocket(ServerActivity.SocketServerPORT);
                 serverActivity.runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
                         serverActivity.infoPort.setText("Port : " + serverActivity.serverSocket.getLocalPort());
-                        serverActivity.choose.setText("Chosen File :");
-                        serverActivity.info.setText(path);
+                        serverActivity.choose.setText("Generate QR");
+                        serverActivity.info.setText(message);
+                        serverActivity.length = (int) file.length();
                     }
                 });
+
+                if (file.exists())
+                    file.deleteOnExit();
 
                 while (true) {
                     socket = serverActivity.serverSocket.accept();

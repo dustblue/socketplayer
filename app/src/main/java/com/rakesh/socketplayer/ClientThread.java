@@ -35,9 +35,9 @@ public class ClientThread extends Thread {
 
             File file = new File(
                     Environment.getExternalStorageDirectory(),
-                    "received.txt");
+                    clientActivity.filename);
 
-            byte[] bytes = new byte[1024];
+            byte[] bytes = new byte[clientActivity.length];
             InputStream is = socket.getInputStream();
             FileOutputStream fos = new FileOutputStream(file, true);
             BufferedOutputStream bos = new BufferedOutputStream(fos);
