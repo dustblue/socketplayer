@@ -37,12 +37,15 @@ public class ClientThread extends Thread {
                     Environment.getExternalStorageDirectory(),
                     clientActivity.filename);
 
-            byte[] bytes = new byte[clientActivity.length];
+            byte[] bytes = new byte[1024];
             InputStream is = socket.getInputStream();
-            FileOutputStream fos = new FileOutputStream(file, true);
+            FileOutputStream fos = new FileOutputStream(file, false);
             BufferedOutputStream bos = new BufferedOutputStream(fos);
-            int bytesRead = is.read(bytes, 0, bytes.length);
-            bos.write(bytes, 0, bytesRead);
+            int bytesRead;
+            while ((bytesRead = is.read(bytes, 0, bytes.length)) > 0) {
+                bos.write(bytes, 0, bytesRead);
+            }
+
             bos.close();
             socket.close();
 
@@ -50,6 +53,8 @@ public class ClientThread extends Thread {
 
                 @Override
                 public void run() {
+                    if (clientActivity.progressDialog.isShowing())
+                        clientActivity.progressDialog.dismiss();
                     Toast.makeText(clientActivity, "Finished", Toast.LENGTH_LONG).show();
                 }
             });
@@ -58,11 +63,13 @@ public class ClientThread extends Thread {
 
             e.printStackTrace();
 
-            final String eMsg = "SOCKET CLIENT READ: " + e.getMessage();
+            final String eMsg = "SOCKET CLIENT READ ERROR: " + e.getMessage();
             clientActivity.runOnUiThread(new Runnable() {
 
                 @Override
                 public void run() {
+                    if (clientActivity.progressDialog.isShowing())
+                        clientActivity.progressDialog.dismiss();
                     Toast.makeText(clientActivity, eMsg, Toast.LENGTH_LONG).show();
                 }
             });

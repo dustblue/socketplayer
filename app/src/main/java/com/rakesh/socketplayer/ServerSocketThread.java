@@ -35,12 +35,13 @@ public class ServerSocketThread extends Thread {
             path = getPath(serverActivity, uri);
             message = path;
 
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             Log.e("URI SYNTAX", "URISyntaxException");
             e.printStackTrace();
         }
         if (path != null) {
-            message = path.split("/")[4];
+            int index = path.lastIndexOf("/");
+            message = path.substring(index + 1);
 
             try {
                 f = new File(path);

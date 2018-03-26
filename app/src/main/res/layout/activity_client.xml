@@ -10,22 +10,47 @@
         android:id="@+id/address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="24dp"
         android:gravity="center_horizontal"
         android:hint="@string/enter_ip_address"
-        app:layout_constraintBottom_toTopOf="@+id/port_client"
+        app:layout_constraintBottom_toTopOf="@+id/portx"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
     <EditText
-        android:id="@id/port_client"
+        android:id="@+id/portx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center_horizontal"
+        android:hint="@string/enter_port"
+        app:layout_constraintBottom_toTopOf="@+id/filename"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <EditText
+        android:id="@+id/filename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:hint="@string/filename"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/file_length"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
+        android:hint="@string/length"
+        android:inputType="number"
+
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filename" />
 
     <Button
         android:id="@+id/connect"
@@ -36,7 +61,7 @@
         android:text="@string/connect"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/port_client" />
+        app:layout_constraintTop_toBottomOf="@id/file_length" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
