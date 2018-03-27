@@ -1,4 +1,4 @@
-package com.rakesh.socketplayer;
+package com.rakesh.socketplayer.server;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -29,13 +28,13 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.rakesh.socketplayer.R;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.SocketException;
-import java.net.URISyntaxException;
 import java.util.Enumeration;
 
 public class ServerActivity extends AppCompatActivity {

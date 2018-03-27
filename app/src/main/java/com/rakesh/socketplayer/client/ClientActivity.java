@@ -1,4 +1,4 @@
-package com.rakesh.socketplayer;
+package com.rakesh.socketplayer.client;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,11 +13,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.rakesh.socketplayer.MediaActivity;
+import com.rakesh.socketplayer.R;
+import com.rakesh.socketplayer.barcode.BarcodeCaptureActivity;
 
 public class ClientActivity extends AppCompatActivity {
 

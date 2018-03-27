@@ -1,4 +1,4 @@
-package com.rakesh.socketplayer;
+package com.rakesh.socketplayer.server;
 
 import android.net.Uri;
 import android.util.Log;
@@ -7,9 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URISyntaxException;
 
-import static com.rakesh.socketplayer.ServerActivity.getPath;
+import static com.rakesh.socketplayer.server.ServerActivity.getPath;
 
 /**
  * Created by Rakesh on 25-03-2018.

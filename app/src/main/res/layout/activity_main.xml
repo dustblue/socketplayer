@@ -8,10 +8,11 @@
 
     <Button
         android:id="@+id/server"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="144dp"
+        android:layout_height="72dp"
         android:layout_marginTop="108dp"
         android:backgroundTint="@color/colorAccent"
+        android:textSize="20sp"
         android:text="@string/server"
         app:layout_constraintBottom_toTopOf="@+id/client"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -20,11 +21,12 @@
 
     <Button
         android:id="@+id/client"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="144dp"
+        android:layout_height="72dp"
         android:layout_marginBottom="108dp"
         android:backgroundTint="@color/colorAccent"
         android:text="@string/client"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

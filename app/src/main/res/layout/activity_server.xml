@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerHorizontal="true"
-    tools:context="com.rakesh.socketplayer.ServerActivity">
+    tools:context="com.rakesh.socketplayer.server.ServerActivity">
 
     <TextView
         android:id="@+id/ip"

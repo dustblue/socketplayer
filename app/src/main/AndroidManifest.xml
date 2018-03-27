@@ -18,10 +18,10 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity android:name=".MainActivity" />
         <activity
-            android:name=".ServerActivity"
+            android:name=".server.ServerActivity"
             android:label="@string/server_mode" />
         <activity
-            android:name=".ClientActivity"
+            android:name=".client.ClientActivity"
             android:label="@string/client_mode" />
         <activity
             android:name=".SplashActivity"
@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BarcodeCaptureActivity"
+            android:name=".barcode.BarcodeCaptureActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".MediaActivity"

@@ -1,4 +1,4 @@
-package com.rakesh.socketplayer;
+package com.rakesh.socketplayer.server;
 
 import android.util.Log;
 
