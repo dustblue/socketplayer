@@ -2,8 +2,10 @@ package com.rakesh.socketplayer;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -22,15 +25,20 @@ public class ClientActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     EditText editTextAddress, textPort, editTextFileLength, editTextFilename;
     Button buttonConnect;
-    FloatingActionButton scan;
+    FloatingActionButton scan, last;
     long length = -1;
     int port;
-    String filename = "", ip;
+    String filename = "", ip, finalPath;
+    SharedPreferences prefs;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = prefs.edit();
 
         editTextAddress = findViewById(R.id.address);
         editTextFileLength = findViewById(R.id.file_length);
@@ -39,6 +47,7 @@ public class ClientActivity extends AppCompatActivity {
         textPort.setHint("Port :" + 8080);
         buttonConnect = findViewById(R.id.connect);
         scan = findViewById(R.id.fab);
+        last = findViewById(R.id.last);
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Receiving File from Server...");
         progressDialog.setMessage("Downloading");
@@ -68,6 +77,20 @@ public class ClientActivity extends AppCompatActivity {
                 startActivityForResult(intent, BARCODE_REQUEST_CODE);
             }
         });
+
+        last.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String lastPath = prefs.getString("lastFile", "none");
+                if (lastPath.equals("none")) {
+                    Toast.makeText(ClientActivity.this, "No file found", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent = new Intent(ClientActivity.this, MediaActivity.class);
+                    intent.putExtra("file", lastPath);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     @Override
@@ -91,6 +114,14 @@ public class ClientActivity extends AppCompatActivity {
                 Log.e("Barcode Error", CommonStatusCodes.getStatusCodeString(resultCode));
         } else
             super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void startPlayer() {
+        editor.putString("lastFile", finalPath);
+        editor.commit();
+        Intent intent = new Intent(ClientActivity.this, MediaActivity.class);
+        intent.putExtra("file", finalPath);
+        startActivity(intent);
     }
 
 }

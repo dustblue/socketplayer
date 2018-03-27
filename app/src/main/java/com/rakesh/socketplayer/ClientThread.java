@@ -19,6 +19,7 @@ public class ClientThread extends Thread {
     private ClientActivity clientActivity;
     private String dstAddress;
     private int dstPort;
+    private String p;
 
     ClientThread(ClientActivity clientActivity, String address, int port) {
         this.clientActivity = clientActivity;
@@ -33,9 +34,10 @@ public class ClientThread extends Thread {
         try {
             socket = new Socket(dstAddress, dstPort);
 
-            File file = new File(
-                    Environment.getExternalStorageDirectory(),
-                    clientActivity.filename);
+            File folder = new File(Environment.getExternalStorageDirectory()+"/socketplayer");
+            folder.mkdir();
+            String dir = folder.toString();
+            File file = new File(dir, clientActivity.filename);
 
             byte[] bytes = new byte[1024];
             InputStream is = socket.getInputStream();
@@ -45,7 +47,7 @@ public class ClientThread extends Thread {
             while ((bytesRead = is.read(bytes, 0, bytes.length)) > 0) {
                 bos.write(bytes, 0, bytesRead);
             }
-
+            p = file.getAbsolutePath();
             bos.close();
             socket.close();
 
@@ -53,9 +55,11 @@ public class ClientThread extends Thread {
 
                 @Override
                 public void run() {
+                    clientActivity.finalPath = p;
                     if (clientActivity.progressDialog.isShowing())
                         clientActivity.progressDialog.dismiss();
                     Toast.makeText(clientActivity, "Finished", Toast.LENGTH_LONG).show();
+                    clientActivity.startPlayer();
                 }
             });
 

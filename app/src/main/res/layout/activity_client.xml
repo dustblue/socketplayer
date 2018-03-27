@@ -84,4 +84,25 @@
         app:layout_constraintLeft_toLeftOf="@id/fab"
         app:layout_constraintRight_toRightOf="@id/fab" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/last"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:srcCompat="@drawable/ic_archive" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:labelFor="@id/fab"
+        android:text="@string/last_file"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/last"
+        app:layout_constraintLeft_toLeftOf="@id/last"
+        app:layout_constraintRight_toRightOf="@id/last" />
+
 </android.support.constraint.ConstraintLayout>
